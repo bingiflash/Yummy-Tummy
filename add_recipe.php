@@ -51,11 +51,11 @@
                 <div class="row input-group ">
                     <input class=" col-lg-7 col-md-7 col-sm-12 custom-select mr-1" id="" aria-label="" type="text" list="ingredients_list" placeholder="Ingredient">
 <?php
-$servername = "";
+$servername = "10.0.0.200";
 $username = "root";
-$password = "";
+$password = "BingiV";
 $dbname = "yummy_tummy";
-
+$port = 9765;
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
@@ -63,11 +63,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT * FROM `ingredient` ORDER BY `ingredient`.`item` ASC";
+$sql = "SELECT * FROM ingredient ORDER BY ingredient.item ASC";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    echo "<datalist id='ingredients_list'></datalist>";
+    echo "<datalist id='ingredients_list'>";
     // output data of each row
     while($row = $result->fetch_assoc()) {
         echo '<option value="'.$row["item"].'">';
@@ -78,6 +78,8 @@ if ($result->num_rows > 0) {
 }
 $conn->close();
 ?>   
+<datalist id='ingredients_list'>
+</datalist>
                     <input class=" col-lg-2 col-md-2 col-sm-3 form-control mr-1" type="number" min="1" id="" aria-label="" placeholder="Quantity">
                         
                       <select class=" col-lg-2 col-md-2 col-sm-3 custom-select" id="" aria-label="">

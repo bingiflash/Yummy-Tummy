@@ -7,12 +7,6 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 if (!$conn)
     die("Connection failed: " . mysqli_connect_error());
 
-// if (!empty($_GET["var"])) {
-//     echo $_GET["var"];
-// } else {
-//     echo "HI";
-// }
-
 // JSON init or from POST
 $QueryData = array();
 $QueryData['Receipe_name'] = "Tomato Curry";
@@ -28,23 +22,27 @@ $QueryData['ing_list'] = array(
 );
 //JSON done
 
-$sql = "INSERT INTO recipe VALUES (NULL, \"" . $QueryData['Receipe_name'] . "\", \"" . $QueryData['type'] . "\", \"" . $QueryData['url'] . "\")";
-// echo $sql;
-$result = mysqli_query($conn, $sql);
+$recipe_query = "INSERT INTO recipe VALUES (NULL, \"" . $QueryData['Receipe_name'] . "\", \"" . $QueryData['type'] . "\", \"" . $QueryData['url'] . "\")";
+$result = mysqli_query($conn, $recipe_query);
 
 if ($result) {
-    echo "success";
+    echo "Added a Recipe <br>";
 } else {
-    echo "failure";
+    echo "Failed to add a Recipe <br>";
 }
-// echo $result;
-// echo mysqli_fetch_assoc($result)["item"];
+
+$id_query = "SELECT id  FROM recipe WHERE name LIKE \"" . $QueryData['Receipe_name'] . "\"";
+$result = mysqli_query($conn, $id_query);
+$recipe_id =  mysqli_fetch_assoc($result)["id"];
+
+foreach ($QueryData['ing_list'] as &$step) {
+    $recipe_ing_query = "INSERT INTO recipe_ingredient VALUES (NULL, \"" . $recipe_id . "\", \"" . $step['ingridient'] . "\", \"" . $step['Quantity'] . "\", \"" . $step['Units'] . "\")";
+    $result = mysqli_query($conn, $recipe_ing_query);
+    if ($result) {
+        echo "Added a Recipe Step <br>";
+    } else {
+        echo "Unable to a add a Recipe Step <br>";
+    }
+}
 
 mysqli_close($conn);
-
-
-// echo $QueryData;
-// $myJSON = json_encode($QueryData);
-
-// echo $myJSON;
-// echo JSON . stringify($myJSON);

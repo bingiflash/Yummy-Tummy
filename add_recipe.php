@@ -85,7 +85,7 @@
           <input class=" col-lg-2 col-md-2 col-sm-3 form-control mr-1" type="number" min="1"  aria-label="" placeholder="Quantity">
 
           <select class=" col-lg-2 col-md-2 col-sm-3 custom-select" aria-label="">
-            <option selected>Units</option>
+            <option hidden>Units</option>
             <option value="pieces">Pieces</option>
             <option value="glasses">Glasses</option>
             <option value="Tspoons">T-spoons</option>
@@ -104,7 +104,7 @@
           <input class=" col-lg-2 col-md-2 col-sm-3 form-control mr-1" type="number" min="1"  aria-label="" placeholder="Quantity">
 
           <select class=" col-lg-2 col-md-2 col-sm-3 custom-select" aria-label="">
-            <option selected>Units</option>
+            <option hidden>Units</option>
             <option value="pieces">Pieces</option>
             <option value="glasses">Glasses</option>
             <option value="Tspoons">T-spoons</option>

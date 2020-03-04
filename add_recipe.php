@@ -27,11 +27,11 @@
       </div>
       <input  type="text" class="form-control" id="recipe_name" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       <div class="input-group-append btn-group btn-group-toggle" >
-        <label class="btn btn-outline-success ">
-          <input type="radio" name="options" id="veg"> Veg
+        <label class="btn btn-outline-success tbtn " id='veg_btn'>
+          <input type="radio" name="type" id="veg" checked> Veg
         </label>
-        <label class="btn btn-outline-warning">
-          <input type="radio" name="options" id="nonveg"> Non-Veg
+        <label class="btn btn-outline-warning tbtn" id='nonveg_btn'>
+          <input type="radio" name="type" id="nonveg"> Non-Veg
         </label>
       </div>
     </div>
@@ -50,13 +50,7 @@
     </div>
     <div class="container">
     <?php
-          $servername = "10.0.0.200";
-          $username = "root";
-          $password = "BingiV";
-          $dbname = "yummy_tummy";
-          $port = 9765;
-          // Create connection
-          $conn = new mysqli($servername, $username, $password, $dbname);
+          include("backup\dbconfig.php"); //db configuration
           // Check connection
           if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
@@ -69,7 +63,9 @@
             echo "<datalist id='ingredients_list'>";
             // output data of each row
             while ($row = $result->fetch_assoc()) {
-              echo '<option label="' . $row['item'] . '" value="' . $row["id"] . '">';
+              $item = $row["item"];
+              $item = str_replace(' ', '', $item);
+              echo '<option id = "'.$item.'" label="' . $row['id'] . '" value="' . $row["item"] . '">';
             }
             echo "</datalist>";
           } else {
@@ -77,13 +73,11 @@
           }
           $conn->close();
           ?>
-      <div class="container ing" >
+      <div class="container-fluid ing" >
         <!-- Hidden ingredient thread  -->
         <div class="row input-group mb-1" id="ing_0" style="display:none;">
-          <input class=" col-lg-7 col-md-7 col-sm-12 custom-select mr-1"  aria-label="" type="text" list="ingredients_list" placeholder="Ingredient">
-          
+          <input class=" col-lg-7 col-md-7 col-sm-12 custom-select mr-1"  aria-label="" type="text" list="ingredients_list" placeholder="Ingredient"> 
           <input class=" col-lg-2 col-md-2 col-sm-3 form-control mr-1" type="number" min="1"  aria-label="" placeholder="Quantity">
-
           <select class=" col-lg-2 col-md-2 col-sm-3 custom-select" aria-label="">
             <option hidden>Units</option>
             <option value="pieces">Pieces</option>
@@ -91,46 +85,45 @@
             <option value="Tspoons">T-spoons</option>
             <option value="grams">Grams</option>
           </select>
-
           <div class="input-group-append col col-md-2 col-sm-3">
             <button class="btn btn-outline-primary mr-1" type="button" onclick="add_ingredient()">+</button>
             <button class="btn btn-outline-danger remove_ing " type="button">-</button>
           </div>
         </div>
-        <!-- end Hidden ingredient thread-->
-        <div class="row input-group mb-1" id="ing_1">
-          <input class=" col-lg-7 col-md-7 col-sm-12 custom-select mr-1"  aria-label="" type="text" list="ingredients_list" placeholder="Ingredient">
-          
-          <input class=" col-lg-2 col-md-2 col-sm-3 form-control mr-1" type="number" min="1"  aria-label="" placeholder="Quantity">
-
-          <select class=" col-lg-2 col-md-2 col-sm-3 custom-select" aria-label="">
-            <option hidden>Units</option>
-            <option value="pieces">Pieces</option>
-            <option value="glasses">Glasses</option>
-            <option value="Tspoons">T-spoons</option>
-            <option value="grams">Grams</option>
-          </select>
-
-          <div class="input-group-append col col-md-2 col-sm-3">
-            <button class="btn btn-outline-primary mr-1" type="button" onclick="add_ingredient()">+</button>
-            <button class="btn btn-outline-danger remove_ing" type="button">-</button>
-          </div>
-        </div>
-        
+        <!-- end Hidden ingredient thread-->        
       </div>
-
       <div class="row mt-1">
         <div class="col-12 ">
           <button type="button" class="btn btn-success btn-lg float-right " id="add">Add</button>
         </div>
       </div>
     </div>
-
   </div>
 <script>
-  var ing_id  = 1;
+
+var ing_id  = 0;
 $('.remove_ing').click(remove_ingredient);
 $('#add').click(send_data);
+add_ingredient();
+non_veg();
+$('.tbtn').click(non_veg);
+function non_veg(){
+  if($('#nonveg').is(':checked')){
+    //console.log($('#nonveg').is(':checked'));
+    $("#nonveg_btn").removeClass("btn-outline-warning");
+    $("#veg_btn").removeClass("btn-success");
+    $("#nonveg_btn").addClass("btn-warning");
+    $("#veg_btn").addClass("btn-outline-success");
+  }
+  else{
+    $("#nonveg_btn").removeClass("btn-warning");
+    $("#veg_btn").removeClass("btn-outline-success");
+    $("#nonveg_btn").addClass("btn-outline-warning");
+    $("#veg_btn").addClass("btn-success");
+  }
+  
+
+}
 function remove_ingredient(){
   var ing_remove_id = '#'+$(this).parent().parent().attr("id");
   //console.log(ing_remove_id);
@@ -141,6 +134,7 @@ function remove_ingredient(){
     add_ingredient(); 
   }
 }
+
 function add_ingredient(){
   var ing_0 =  $('#ing_0').html();
   ing_id+=1;
@@ -153,20 +147,26 @@ function send_data(){
   var ing_ar = [];
   var list_ing = $('.ing').children();
   for (i = 1; i < list_ing.length; i++){
-    ing_obj["ing_id"]=list_ing[i].children[0].value;
+    ing_key = list_ing[i].children[0].value;
+    ing_key = "#"+ing_key.replace( /\s/g, '');
+    ing_obj["ing_id"]=$(ing_key).attr("label");
     ing_obj["quantity"]=list_ing[i].children[1].value;
     ing_obj["units"]=list_ing[i].children[2].value;
     ing_ar.push(ing_obj);
     ing_obj = {};
   }
+  if($('#nonveg').is(':checked')){
+    typ = "Nonveg";
+  }else{
+    typ = "Veg";
+  }
   var recipe_data = {
     recipe_name:$("#recipe_name").val(),
-    type:$("#recepi_name").val(),
+    type:typ,
     url:$("#url").val(),
     note:$("#note").val(),
     ing_list:ing_ar
   }
-  console.log(recipe_data);
   $.ajax({
     type: "POST",
     url: "add_recipe_backend.php",

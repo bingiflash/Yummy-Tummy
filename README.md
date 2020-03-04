@@ -10,3 +10,7 @@ A Recipe Guide app to advise you what to cook based on your Pantry.
 
 ### Testing the prototype
 - Create an interface to test out the product - Chandrahas & Venkatesh
+
+
+### small changes
+- unparse json data in backend.php and check parameter[add note] - bingi

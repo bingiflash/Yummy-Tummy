@@ -174,7 +174,7 @@ function send_data(){
       data: JSON.stringify(recipe_data)
     },
     success: function (ee) {
-      alert(ee.msg);
+      alert(ee);
     },
     error:()=>{
       alert('AJAX Error!');

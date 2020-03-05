@@ -26,23 +26,24 @@ $result = mysqli_query($conn, $recipe_query);
 
 if ($result) {
     $res_suc = true;
+    $id_query = "SELECT id  FROM recipe WHERE name LIKE \"" . $QueryData['recipe_name'] . "\"";
+    $result = mysqli_query($conn, $id_query);
+    $recipe_id =  mysqli_fetch_assoc($result)["id"];
+    foreach ($QueryData['ing_list'] as &$step) {
+        $recipe_ing_query = "INSERT INTO recipe_ingredient VALUES (NULL, \"" . $recipe_id . "\", \"" . $step['ing_id'] . "\", \"" . $step['quantity'] . "\", \"" . $step['units'] . "\")";
+        $result = mysqli_query($conn, $recipe_ing_query);
+        if ($result) {
+            $res_suc = true;
+        } else {
+            $res_suc = false;
+            break;
+        }
+    }
 } else {
     $res_suc = false;
 }
 
-$id_query = "SELECT id  FROM recipe WHERE name LIKE \"" . $QueryData['recipe_name'] . "\"";
-$result = mysqli_query($conn, $id_query);
-$recipe_id =  mysqli_fetch_assoc($result)["id"];
-foreach ($QueryData['ing_list'] as &$step) {
-    $recipe_ing_query = "INSERT INTO recipe_ingredient VALUES (NULL, \"" . $recipe_id . "\", \"" . $step['ing_id'] . "\", \"" . $step['quantity'] . "\", \"" . $step['units'] . "\")";
-    $result = mysqli_query($conn, $recipe_ing_query);
-    if ($result) {
-        $res_suc = true;
-    } else {
-        $res_suc = false;
-        break;
-    }
-}
+
 $rep_msg = array();
 if ($res_suc) {
     $rep_msg['msg'] = "Recipe Added Successfully";
